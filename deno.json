@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "test": "deno run src/main.ts '/Users/abiddiscombe/Documents/OS Open Names/opname_csv_gb/Data'"
+  },
+  "imports": {
+    "csv": "https://deno.land/x/csv/mod.ts",
+    "proj4": "npm:proj4"
+  }
+}
