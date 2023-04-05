@@ -85,9 +85,9 @@ for (let i = 0; i < sources.length; i++) {
 
     try {
       indexCursor++;
-      [fs.lat, fs.lng] = Proj4("ESPG:27700", "WGS84", [
-        Number(fs.lat),
+      [fs.lng, fs.lat] = Proj4("ESPG:27700", "WGS84", [
         Number(fs.lng),
+        Number(fs.lat),
       ]);
       fileWriter.writeSync(
         new TextEncoder().encode(
