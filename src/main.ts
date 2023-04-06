@@ -11,7 +11,7 @@ Proj4.defs("ESPG:27700", crs["EPSG:27700"]);
 status.other("OS OpenNames CSV -> GeoJSON Conversion Utility");
 status.other("https://github.com/abiddiscombe/opennames-to-geojson");
 
-const SOURCE = '/Users/uname/Documents/OS Open Names/opname_csv_gb/Data'
+const SOURCE = '/Users/username/Documents/OS Open Names/opname_csv_gb/Data'
 
 let totalFailed = 0;
 let indexCursor = 0;
@@ -74,10 +74,10 @@ for (let i = 0; i < sources.length; i++) {
           fs.properties.localType = cell;
           break;
         case 8:
-          fs.lat = cell;
+          fs.lng = cell;
           break;
         case 9:
-          fs.lng = cell;
+          fs.lat = cell;
           break;
       }
       x++;
