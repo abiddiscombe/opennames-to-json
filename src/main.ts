@@ -11,7 +11,7 @@ Proj4.defs("ESPG:27700", crs["EPSG:27700"]);
 status.other("OS OpenNames CSV -> GeoJSON Conversion Utility");
 status.other("https://github.com/abiddiscombe/opennames-to-geojson");
 
-const SOURCE = '/Users/username/Documents/OS Open Names/opname_csv_gb/Data'
+const SOURCE = '/Users/abiddiscombe/Documents/OS Open Names/opname_csv_gb/Data'
 
 let totalFailed = 0;
 let indexCursor = 0;
@@ -42,36 +42,28 @@ for (let i = 0; i < sources.length; i++) {
     let x = 0;
     const fs = {
       properties: {
-        id: undefined,
-        uri: undefined,
-        type: undefined,
-        localType: undefined,
-        name1: undefined,
-        name2: undefined,
+        fid: undefined,
+        name: undefined,
+        class1: undefined,
+        class2: undefined
       },
-      lat: 0,
       lng: 0,
+      lat: 0
     };
 
     for await (const cell of row) {
       switch (x) {
         case 0:
-          fs.properties.id = cell;
-          break;
-        case 1:
-          fs.properties.uri = cell;
+          fs.properties.fid = cell;
           break;
         case 2:
-          fs.properties.name1 = cell;
-          break;
-        case 4:
-          fs.properties.name2 = cell;
+          fs.properties.name = cell;
           break;
         case 6:
-          fs.properties.type = cell;
+          fs.properties.class1 = cell;
           break;
         case 7:
-          fs.properties.localType = cell;
+          fs.properties.class2 = cell;
           break;
         case 8:
           fs.lng = cell;
@@ -83,6 +75,17 @@ for (let i = 0; i < sources.length; i++) {
       x++;
     }
 
+    if (fs.properties.class2) {
+      fs.properties.class1 += `.${fs.properties.class2.replaceAll(" ", "")}`
+    }
+
+    if (!fs.properties.class1) {
+      fs.properties.class1 = "other"
+    }
+
+    fs.properties.class1 = fs.properties.class1.toLowerCase()
+
+
     try {
       indexCursor++;
       [fs.lng, fs.lat] = Proj4("ESPG:27700", "WGS84", [
@@ -91,7 +94,7 @@ for (let i = 0; i < sources.length; i++) {
       ]);
       fileWriter.writeSync(
         new TextEncoder().encode(
-          `{ "type": "Feature", "properties": { "id": "${fs.properties.id}", "uri": "${fs.properties.uri}", "name1": "${fs.properties.name1}", "name2": "${fs.properties.name2}", "type": "${fs.properties.type}", "local_type": "${fs.properties.localType}" }, "geometry": { "type": "Point", "coordinates": [ ${fs.lng}, ${fs.lat} ] } },\n`,
+          `{ "type": "Feature", "properties": { "fid": "${fs.properties.fid}", "name": "${fs.properties.name}", "class": "${fs.properties.class1}" }, "geometry": { "type": "Point", "coordinates": [ ${fs.lng}, ${fs.lat} ] } },\n`,
         ),
       );
     } catch {
