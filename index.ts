@@ -94,7 +94,8 @@ function instantiateFeatureTemplate(origin: string) {
       fid: "",
       name: "",
       class: "",
-      origin: origin.split(".")[0],
+      source: "Ordnance Survey OpenNames",
+      gridRef: origin.split(".")[0],
     },
     geometry: {
       type: "Point",

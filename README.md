@@ -36,7 +36,8 @@ The GeoJSON FeatureCollection will contain **point** features with the following
     "fid": "osgb4000000073495356", // OS Identifier
     "name": "Durham University", // Name1
     "class": "other.higheroruniversityeducation", // Type & LocalType
-    "origin": "NZ24" // OS Grid Ref (via filename)
+    "source": "Ordnance Survey OpenNames",
+    "gridRef": "NZ24" // OS Grid Ref (via filename)
   },
   "geometry": {
     "type": "Point",
