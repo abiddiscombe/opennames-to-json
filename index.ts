@@ -58,7 +58,7 @@ for (let sfIndex = 0; sfIndex < sourceFiles.length; sfIndex++) {
       i++;
     }
     if (!template.properties.name) break;
-    template.properties.class = template.properties.class.replace(" ", "");
+    template.properties.class = template.properties.class.replaceAll(" ", "");
     template.geometry.coordinates = Proj4(
       "ESPG:27700",
       "WGS84",

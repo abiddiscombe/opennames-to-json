@@ -12,7 +12,7 @@ This repo hosts a homemade utility script for JS/Deno which converts the **CSV f
 
 ## Running the Script
 
-This script utilises the [Deno runtime](https://www.deno.com). In the same directory as the script, run:
+This script runs on the [Deno runtime](https://www.deno.com). In the same directory as the script, run:
 
 ```bash
 deno run index.ts "/path/to/opennames/Data"
