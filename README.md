@@ -1,51 +1,28 @@
-# OpenNames-to-GeoJSON
+# OS OpenNames to JSON
 
-Ordnance Survey (OS) OpenNames is a comprehensive dataset of place names, roads numbers and postcodes for Great Britain; you can read more about it [here](https://www.ordnancesurvey.co.uk/products/os-open-names). It's a free [OGL](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) dataset provided as either a CSV or GeoPackage in the `EPSG:27700` (British National Grid) CRS.
+> 🚀 Refactored from [Deno](https://deno.com/) to [Go](https://go.dev) as part of my ongoing learning! \
+> This version can process more of the dataset in less time (Apple M1: Deno - 98 sec, Go - 34 sec).
 
-This repo hosts a homemade utility script for JS/Deno which converts the **CSV format** of this dataset into a single (and fairly large) GeoJSON FeatureCollection. It was originally written to assist the ETL process into MongoDB, but can be customised for other use cases. In summary, the script will:
+Ordnance Survey (OS) Open Names is a [comprehensive dataset of place names, roads numbers and postcodes for Great Britain](https://www.ordnancesurvey.co.uk/products/os-open-names). It's an [OGL](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) dataset provided in the British National Grid `EPSG:27700` CRS.
 
-- Stream in each CSV file.
-- Create a new feature for each dataset entity.
-- Copy a subset of the original metadata into each feature's properties.
-- Convert the geometry of each feature to WGS84 using the [Proj4JS](http://proj4js.org/) library.
-- Store the output as `output.geojson` in the working directory.
+This code **converts the OS Open Names CSV dataset into a JSON array consisting of multiple GeoJSON Features**. It's designed for bulk importing into MongoDB using [MongoDB Compass](https://www.mongodb.com/products/tools/compass). The bulk importer expects a JSON array of features, not a GeoJSON object - and therefore this script won't create a valid GeoJSON file.
 
-## Running the Script
+The following metadata is included by default: `id`, `type`, `localType`, `name1`, `name1Lang`, `name2`, `name2Lang`, `geomX`, `geomY`. Geometry is converted to `lat-lon` values, and the `name2` and `name2Lang` are often empty strings.
 
-This script runs on the [Deno runtime](https://www.deno.com). In the same directory as the script, run:
+## Running
 
-```bash
-deno run index.ts "/path/to/opennames/Data"
-```
+I'm not creating prebuilt binaries for this script at this time.
 
-Where the `/Data` directory is equivalent to the parent directory of the CSV files on your filesystem. This script will take a few seconds to run; don't open the `output.geojson` file until the script has completed.
+1. Install [Go](https://go.dev/dl/) on your machine. I do this via Homebrew on MacOS.
 
-## Output Feature Schema
+2. Copy the `/Data` directory from [OS Open Names](https://osdatahub.os.uk/downloads/open/OpenNames) into the root of this repository. This directory contains ~819 CSV files each representing a distinct region.
 
-The CRS conversion process utilises a
-[Helmert datum transformation](https://en.wikipedia.org/wiki/Helmert_transformation)
-which can lead to inaccuracies of up to 3.5m in some areas. Given the nature and
-purpose of OS OpenNames I have determined this to be an acceptable range of error, but please keep this in mind depending on your use case!
+3. Run the script with `go run main.go`. The output is stored in a newly created `output.json` file.
 
-The GeoJSON FeatureCollection will contain **point** features with the following attribution:
+If you choose to host this dataset with MongoDB you [must create a `2dsphere` index to handle geospatial queries](https://www.mongodb.com/docs/manual/core/indexes/index-types/geospatial/2d/). I also strongly advise creating indexes for any other columns you plan to query against.
 
-```jsonc
-{
-  "type": "Feature",
-  "properties": {
-    "fid": "osgb4000000073495356", // OS Identifier
-    "name": "Durham University", // Name1
-    "class": "other.higheroruniversityeducation", // Type & LocalType
-    "source": "Ordnance Survey OpenNames",
-    "gridRef": "NZ24" // OS Grid Ref (via filename)
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [-1.5611190052871562, 54.772369280517154]
-  }
-}
-```
+## Credits
 
-## License
+[MIT License](./LICENSE). Feel free to refactor to suit your needs.
 
-This script is MIT licensed. Feel free to modify it to suit your needs.
+This script relies on the awesome [wroge/wgs84](https://pkg.go.dev/github.com/wroge/wgs84/v2) and [paulmach/orb](https://pkg.go.dev/github.com/paulmach/orb) packages for coordinate transformation and GeoJSON parsing.
